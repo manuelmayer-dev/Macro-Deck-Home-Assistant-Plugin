@@ -18,7 +18,6 @@ namespace SuchByte.HomeAssistantPlugin
     public class Main : MacroDeckPlugin
     {
         public static HomeAssistant HomeAssistant;
-        public override string Author => "Macro Deck";
         public override string Description => "(Beta) This plugin can control your Home Assistant smart home";
         public override List<PluginAction> Actions { get; set; } = new List<PluginAction>();
         public override Image Icon => Properties.Resources.Home_Assistant_Plugin;
