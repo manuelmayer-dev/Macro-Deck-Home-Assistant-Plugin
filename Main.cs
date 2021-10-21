@@ -128,7 +128,6 @@ namespace SuchByte.HomeAssistantPlugin
         public override string Name => "Call service";
         public override string Description => "Calls a Home Assistant service";
         public override string DisplayName { get; set; } = "Call service";
-        public override string Configuration { get; set; } = "";
         public override bool CanConfigure => true;
         public override ActionConfigControl GetActionConfigControl(ActionConfigurator actionConfigurator)
         {
