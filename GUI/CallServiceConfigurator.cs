@@ -28,7 +28,7 @@ namespace SuchByte.HomeAssistantPlugin.GUI
             this._macroDeckAction = macroDeckAction;
             InitializeComponent();
 
-            if (this._macroDeckAction.Configuration.Length > 0)
+            if (!String.IsNullOrWhiteSpace(this._macroDeckAction.Configuration))
             {
                 this.OnServicesLoaded += ServicesLoaded;
                 if (JObject.Parse(this._macroDeckAction.Configuration)["entityId"] != null) {
