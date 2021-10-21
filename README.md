@@ -1,6 +1,5 @@
 # Home Assistant plugin for Macro Deck 2
-This plugin can control your Home Assistant smart home
-
+Control your Home Assistant smart home with Macro Deck!
 
 # Features
 - ### Call service
