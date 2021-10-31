@@ -96,16 +96,19 @@ namespace SuchByte.HomeAssistantPlugin.GUI
             Main.HomeAssistant.OnAuthFailed += AuthFailed;
             Main.HomeAssistant.OnAuthSuccess += AuthSuccess;
             List<Dictionary<string, string>> credentialsList = PluginCredentials.GetPluginCredentials(this._main);
-            Dictionary<string, string> credentials = null;
-            if (credentialsList.Count > 0)
+            if (credentialsList != null && credentialsList.Count > 0)
             {
-                credentials = credentialsList[0];
-            }
-            if (credentials != null)
-            {
-                this.inputUrl.Text = credentials["host"];
-                this.token.Text = credentials["token"];
-                this.checkSSL.Checked = bool.Parse(credentials["ssl"]);
+                Dictionary<string, string> credentials = null;
+                if (credentialsList.Count > 0)
+                {
+                    credentials = credentialsList[0];
+                }
+                if (credentials != null)
+                {
+                    this.inputUrl.Text = credentials["host"];
+                    this.token.Text = credentials["token"];
+                    this.checkSSL.Checked = bool.Parse(credentials["ssl"]);
+                }
             }
         }
 
