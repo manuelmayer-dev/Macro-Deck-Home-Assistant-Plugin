@@ -164,6 +164,10 @@ namespace SuchByte.HomeAssistantPlugin
                 var taskCompletionSource = new TaskCompletionSource<JObject>();
                 do
                 {
+                    if (this._responseHandlers == null)
+                    {
+                        break;
+                    }
                     messageId = GetNewMessageId();
                     if (this._responseHandlers.TryAdd(messageId, taskCompletionSource))
                     {

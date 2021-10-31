@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ namespace SuchByte.HomeAssistantPlugin.GUI
         {
             InitializeComponent();
             this.searchBox.TextChanged += SearchBox_TextChanged;
+            this.entityList.ItemCheck += EntityList_ItemCheck;
             if (selectedEntitiesJson.Length > 0)
             {
                 try
@@ -31,6 +33,28 @@ namespace SuchByte.HomeAssistantPlugin.GUI
             }
         }
 
+        private void EntityList_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            if (e.NewValue == CheckState.Checked)
+            {
+                string entity = this.entityList.GetItemText(this.entityList.Items[e.Index]);
+                if (!this.SelectedEntities.Contains(entity))
+                {
+                    Debug.WriteLine("Added " + entity);
+                    this.SelectedEntities.Add(entity);
+                }
+                
+            }
+            else
+            {
+                string entity = this.entityList.GetItemText(this.entityList.Items[e.Index]);
+                if (this.SelectedEntities.Contains(entity))
+                {
+                    Debug.WriteLine("Removed " + entity);
+                    this.SelectedEntities.Remove(entity);
+                }
+            }
+        }
 
         private void EntitySelector_Load(object sender, EventArgs e)
         {
@@ -56,13 +80,8 @@ namespace SuchByte.HomeAssistantPlugin.GUI
             }
         }
 
-        private void btnOk_Click(object sender, EventArgs e)
+        private void BtnOk_Click(object sender, EventArgs e)
         {
-            SelectedEntities.Clear();
-            foreach (string entity in this.entityList.CheckedItems)
-            {
-                SelectedEntities.Add(entity);
-            }
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
