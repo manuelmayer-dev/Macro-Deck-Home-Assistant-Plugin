@@ -1,4 +1,6 @@
 ﻿
+using SuchByte.MacroDeck.GUI.CustomControls;
+
 namespace SuchByte.HomeAssistantPlugin.GUI
 {
     partial class EntitySelector
@@ -32,50 +34,75 @@ namespace SuchByte.HomeAssistantPlugin.GUI
             this.entityList = new System.Windows.Forms.CheckedListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.btnOk = new SuchByte.MacroDeck.GUI.CustomControls.ButtonPrimary();
+            this.searchBox = new SuchByte.MacroDeck.GUI.CustomControls.RoundedTextBox();
             this.SuspendLayout();
             // 
             // entityList
             // 
             this.entityList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(55)))), ((int)(((byte)(55)))), ((int)(((byte)(55)))));
-            this.entityList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.entityList.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.entityList.ForeColor = System.Drawing.Color.White;
             this.entityList.FormattingEnabled = true;
-            this.entityList.Location = new System.Drawing.Point(12, 53);
+            this.entityList.Location = new System.Drawing.Point(12, 89);
             this.entityList.Name = "entityList";
-            this.entityList.Size = new System.Drawing.Size(487, 398);
+            this.entityList.Size = new System.Drawing.Size(487, 360);
             this.entityList.TabIndex = 3;
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(12, 31);
+            this.label1.Location = new System.Drawing.Point(7, 7);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(468, 19);
+            this.label1.Size = new System.Drawing.Size(465, 48);
             this.label1.TabIndex = 4;
             this.label1.Text = "Select all the entities you want to use in Macro Deck as a variable";
             // 
             // btnOk
             // 
             this.btnOk.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(123)))), ((int)(((byte)(255)))));
+            this.btnOk.BorderRadius = 8;
             this.btnOk.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnOk.FlatAppearance.BorderSize = 0;
             this.btnOk.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnOk.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.btnOk.ForeColor = System.Drawing.Color.White;
-            this.btnOk.Location = new System.Drawing.Point(424, 457);
+            this.btnOk.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(89)))), ((int)(((byte)(184)))));
+            this.btnOk.Icon = null;
+            this.btnOk.Location = new System.Drawing.Point(424, 455);
             this.btnOk.Name = "btnOk";
-            this.btnOk.Size = new System.Drawing.Size(75, 23);
+            this.btnOk.Progress = 0;
+            this.btnOk.ProgressColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(46)))), ((int)(((byte)(94)))));
+            this.btnOk.Size = new System.Drawing.Size(75, 25);
             this.btnOk.TabIndex = 5;
             this.btnOk.Text = "Ok";
             this.btnOk.UseVisualStyleBackColor = false;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
+            // 
+            // searchBox
+            // 
+            this.searchBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            this.searchBox.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.searchBox.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point);
+            this.searchBox.Icon = global::SuchByte.HomeAssistantPlugin.Properties.Resources.magnifying_glass;
+            this.searchBox.Location = new System.Drawing.Point(249, 58);
+            this.searchBox.Multiline = false;
+            this.searchBox.Name = "searchBox";
+            this.searchBox.Padding = new System.Windows.Forms.Padding(26, 5, 8, 5);
+            this.searchBox.PasswordChar = false;
+            this.searchBox.PlaceHolderColor = System.Drawing.Color.Gray;
+            this.searchBox.PlaceHolderText = "Search entitiy";
+            this.searchBox.ReadOnly = false;
+            this.searchBox.SelectionStart = 0;
+            this.searchBox.Size = new System.Drawing.Size(250, 25);
+            this.searchBox.TabIndex = 6;
+            this.searchBox.TextAlignment = System.Windows.Forms.HorizontalAlignment.Left;
             // 
             // EntitySelector
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(511, 490);
+            this.Controls.Add(this.searchBox);
             this.Controls.Add(this.btnOk);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.entityList);
@@ -85,13 +112,15 @@ namespace SuchByte.HomeAssistantPlugin.GUI
             this.Controls.SetChildIndex(this.entityList, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.btnOk, 0);
+            this.Controls.SetChildIndex(this.searchBox, 0);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
+
         #endregion
 
+        private RoundedTextBox searchBox;
         private System.Windows.Forms.CheckedListBox entityList;
         private System.Windows.Forms.Label label1;
         private MacroDeck.GUI.CustomControls.ButtonPrimary btnOk;

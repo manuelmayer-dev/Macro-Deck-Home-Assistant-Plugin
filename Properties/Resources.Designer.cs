@@ -69,5 +69,15 @@ namespace SuchByte.HomeAssistantPlugin.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap magnifying_glass {
+            get {
+                object obj = ResourceManager.GetObject("magnifying glass", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

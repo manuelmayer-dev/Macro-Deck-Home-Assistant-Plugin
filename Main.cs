@@ -4,6 +4,7 @@ using SuchByte.MacroDeck.ActionButton;
 using SuchByte.MacroDeck.GUI;
 using SuchByte.MacroDeck.GUI.CustomControls;
 using SuchByte.MacroDeck.Plugins;
+using SuchByte.MacroDeck.Variables;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -85,27 +86,32 @@ namespace SuchByte.HomeAssistantPlugin
                     if (variablesEntityIds == null || variablesEntityIds.Length == 0) return;
                     JArray variablesArray = JArray.Parse(variablesEntityIds);
                     if (variablesArray == null) return;
+                    string[] suggestions = new string[0];
                     if (variablesArray.ToObject<List<string>>().Contains(newState["entity_id"].ToString()))
                     {
                         object value = newState["state"];
                         MacroDeck.Variables.VariableType type = MacroDeck.Variables.VariableType.String;
                         if (Boolean.TryParse(value.ToString(), out bool b))
                         {
-                            type = MacroDeck.Variables.VariableType.Bool;
+                            type = VariableType.Bool;
                         }
                         else if (int.TryParse(value.ToString(), out int i))
                         {
-                            type = MacroDeck.Variables.VariableType.Integer;
+                            type = VariableType.Integer;
                         }
                         else if (float.TryParse(value.ToString(), out float f))
                         {
-                            type = MacroDeck.Variables.VariableType.Float;
+                            type = VariableType.Float;
                         }
-                        else if (value is string)
+                        if (type.Equals(VariableType.String))
                         {
-                            type = MacroDeck.Variables.VariableType.String;
+                            suggestions = new string[]
+                            {
+                                "On",
+                                "Off"
+                            };
                         }
-                        MacroDeck.Variables.VariableManager.SetValue(newState["entity_id"].ToString(), newState["state"], type, this);
+                        VariableManager.SetValue(newState["entity_id"].ToString(), newState["state"], type, this, suggestions, false);
                     }
                     
                 }

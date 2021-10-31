@@ -28,6 +28,8 @@ namespace SuchByte.HomeAssistantPlugin.GUI
             this._macroDeckAction = macroDeckAction;
             InitializeComponent();
 
+
+
             if (!String.IsNullOrWhiteSpace(this._macroDeckAction.Configuration))
             {
                 this.OnServicesLoaded += ServicesLoaded;

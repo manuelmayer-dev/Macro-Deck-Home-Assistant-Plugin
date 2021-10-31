@@ -15,9 +15,12 @@ namespace SuchByte.HomeAssistantPlugin.GUI
     {
         public List<string> SelectedEntities = new List<string>();
 
+        private List<string> _entities = new List<string>();
+
         public EntitySelector(string selectedEntitiesJson)
         {
             InitializeComponent();
+            this.searchBox.TextChanged += SearchBox_TextChanged;
             if (selectedEntitiesJson.Length > 0)
             {
                 try
@@ -38,9 +41,19 @@ namespace SuchByte.HomeAssistantPlugin.GUI
                 JArray results = Main.HomeAssistant.GetStates()["result"] as JArray;
                 foreach (JObject result in results)
                 {
-                   this.Invoke(new Action(() => this.entityList.Items.Add(result["entity_id"].ToString(), SelectedEntities.Contains(result["entity_id"].ToString()))));
+                    this._entities.Add(result["entity_id"].ToString());
                 }
+                this.Invoke(new Action(() => UpdateEntityList()));
             });
+        }
+
+        private void UpdateEntityList()
+        {
+            this.entityList.Items.Clear();
+            foreach (string entity in this._entities.FindAll(e => this.searchBox.Text.Length < 2 || MacroDeck.Utils.StringSearch.StringContains(e, this.searchBox.Text)))
+            {
+                this.entityList.Items.Add(entity, SelectedEntities.Contains(entity));
+            }
         }
 
         private void btnOk_Click(object sender, EventArgs e)
@@ -53,5 +66,14 @@ namespace SuchByte.HomeAssistantPlugin.GUI
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
+
+        private void SearchBox_TextChanged(object sender, System.EventArgs e)
+        {
+            if (this.searchBox.Text.Length == 0 || this.searchBox.Text.Length > 1)
+            {
+                UpdateEntityList();
+            }
+        }
+
     }
 }

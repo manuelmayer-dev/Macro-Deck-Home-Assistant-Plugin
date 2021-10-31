@@ -1,4 +1,6 @@
 ﻿
+using SuchByte.MacroDeck.GUI.CustomControls;
+
 namespace SuchByte.HomeAssistantPlugin.GUI
 {
     partial class PluginConfig
@@ -32,10 +34,10 @@ namespace SuchByte.HomeAssistantPlugin.GUI
         private void InitializeComponent()
         {
             this.btnOk = new SuchByte.MacroDeck.GUI.CustomControls.ButtonPrimary();
-            this.token = new System.Windows.Forms.TextBox();
+            this.token = new SuchByte.MacroDeck.GUI.CustomControls.RoundedTextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.inputUrl = new System.Windows.Forms.TextBox();
+            this.inputUrl = new SuchByte.MacroDeck.GUI.CustomControls.RoundedTextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.checkSSL = new System.Windows.Forms.CheckBox();
             this.btnVariables = new SuchByte.MacroDeck.GUI.CustomControls.ButtonPrimary();
@@ -44,13 +46,18 @@ namespace SuchByte.HomeAssistantPlugin.GUI
             // btnOk
             // 
             this.btnOk.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(123)))), ((int)(((byte)(255)))));
+            this.btnOk.BorderRadius = 8;
             this.btnOk.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnOk.FlatAppearance.BorderSize = 0;
             this.btnOk.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnOk.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.btnOk.ForeColor = System.Drawing.Color.White;
-            this.btnOk.Location = new System.Drawing.Point(417, 137);
+            this.btnOk.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(89)))), ((int)(((byte)(184)))));
+            this.btnOk.Icon = null;
+            this.btnOk.Location = new System.Drawing.Point(415, 108);
             this.btnOk.Name = "btnOk";
+            this.btnOk.Progress = 0;
+            this.btnOk.ProgressColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(46)))), ((int)(((byte)(94)))));
             this.btnOk.Size = new System.Drawing.Size(75, 25);
             this.btnOk.TabIndex = 16;
             this.btnOk.Text = "Ok";
@@ -59,31 +66,39 @@ namespace SuchByte.HomeAssistantPlugin.GUI
             // 
             // token
             // 
-            this.token.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(55)))), ((int)(((byte)(55)))), ((int)(((byte)(55)))));
-            this.token.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.token.Font = new System.Drawing.Font("Tahoma", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.token.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            this.token.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.token.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.token.ForeColor = System.Drawing.Color.White;
-            this.token.Location = new System.Drawing.Point(116, 91);
+            this.token.Icon = null;
+            this.token.Location = new System.Drawing.Point(83, 73);
+            this.token.Multiline = false;
             this.token.Name = "token";
-            this.token.Size = new System.Drawing.Size(376, 30);
+            this.token.Padding = new System.Windows.Forms.Padding(8, 5, 8, 5);
+            this.token.PasswordChar = true;
+            this.token.PlaceHolderColor = System.Drawing.Color.Gray;
+            this.token.PlaceHolderText = "";
+            this.token.ReadOnly = false;
+            this.token.SelectionStart = 0;
+            this.token.Size = new System.Drawing.Size(366, 29);
             this.token.TabIndex = 15;
-            this.token.UseSystemPasswordChar = true;
+            this.token.TextAlignment = System.Windows.Forms.HorizontalAlignment.Left;
             // 
             // label4
             // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Tahoma", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label4.Location = new System.Drawing.Point(6, 93);
+            this.label4.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label4.Location = new System.Drawing.Point(6, 73);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(68, 23);
+            this.label4.Size = new System.Drawing.Size(68, 29);
             this.label4.TabIndex = 14;
             this.label4.Text = "Token:";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(116, 64);
+            this.label3.Location = new System.Drawing.Point(83, 44);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(196, 14);
             this.label3.TabIndex = 13;
@@ -91,30 +106,39 @@ namespace SuchByte.HomeAssistantPlugin.GUI
             // 
             // inputUrl
             // 
-            this.inputUrl.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(55)))), ((int)(((byte)(55)))), ((int)(((byte)(55)))));
-            this.inputUrl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.inputUrl.Font = new System.Drawing.Font("Tahoma", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.inputUrl.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            this.inputUrl.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.inputUrl.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.inputUrl.ForeColor = System.Drawing.Color.White;
-            this.inputUrl.Location = new System.Drawing.Point(116, 31);
+            this.inputUrl.Icon = null;
+            this.inputUrl.Location = new System.Drawing.Point(83, 11);
+            this.inputUrl.Multiline = false;
             this.inputUrl.Name = "inputUrl";
-            this.inputUrl.Size = new System.Drawing.Size(316, 30);
+            this.inputUrl.Padding = new System.Windows.Forms.Padding(8, 5, 8, 5);
+            this.inputUrl.PasswordChar = false;
+            this.inputUrl.PlaceHolderColor = System.Drawing.Color.Gray;
+            this.inputUrl.PlaceHolderText = "";
+            this.inputUrl.ReadOnly = false;
+            this.inputUrl.SelectionStart = 0;
+            this.inputUrl.Size = new System.Drawing.Size(366, 29);
             this.inputUrl.TabIndex = 12;
+            this.inputUrl.TextAlignment = System.Windows.Forms.HorizontalAlignment.Left;
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Tahoma", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(6, 33);
+            this.label1.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label1.Location = new System.Drawing.Point(6, 11);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(54, 23);
+            this.label1.Size = new System.Drawing.Size(71, 29);
             this.label1.TabIndex = 11;
             this.label1.Text = "Host:";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // checkSSL
             // 
             this.checkSSL.AutoSize = true;
             this.checkSSL.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.checkSSL.Location = new System.Drawing.Point(438, 35);
+            this.checkSSL.Location = new System.Drawing.Point(376, 44);
             this.checkSSL.Name = "checkSSL";
             this.checkSSL.Size = new System.Drawing.Size(54, 23);
             this.checkSSL.TabIndex = 17;
@@ -124,13 +148,18 @@ namespace SuchByte.HomeAssistantPlugin.GUI
             // btnVariables
             // 
             this.btnVariables.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(123)))), ((int)(((byte)(255)))));
+            this.btnVariables.BorderRadius = 8;
             this.btnVariables.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnVariables.FlatAppearance.BorderSize = 0;
             this.btnVariables.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnVariables.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.btnVariables.ForeColor = System.Drawing.Color.White;
-            this.btnVariables.Location = new System.Drawing.Point(12, 137);
+            this.btnVariables.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(89)))), ((int)(((byte)(184)))));
+            this.btnVariables.Icon = null;
+            this.btnVariables.Location = new System.Drawing.Point(6, 108);
             this.btnVariables.Name = "btnVariables";
+            this.btnVariables.Progress = 0;
+            this.btnVariables.ProgressColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(46)))), ((int)(((byte)(94)))));
             this.btnVariables.Size = new System.Drawing.Size(75, 25);
             this.btnVariables.TabIndex = 18;
             this.btnVariables.Text = "Variables";
@@ -141,7 +170,7 @@ namespace SuchByte.HomeAssistantPlugin.GUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(505, 175);
+            this.ClientSize = new System.Drawing.Size(505, 142);
             this.Controls.Add(this.btnVariables);
             this.Controls.Add(this.checkSSL);
             this.Controls.Add(this.btnOk);
@@ -169,10 +198,10 @@ namespace SuchByte.HomeAssistantPlugin.GUI
         #endregion
 
         private MacroDeck.GUI.CustomControls.ButtonPrimary btnOk;
-        private System.Windows.Forms.TextBox token;
+        private RoundedTextBox token;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox inputUrl;
+        private RoundedTextBox inputUrl;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox checkSSL;
         private MacroDeck.GUI.CustomControls.ButtonPrimary btnVariables;

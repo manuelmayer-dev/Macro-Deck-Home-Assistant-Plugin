@@ -1,4 +1,6 @@
 ﻿
+using SuchByte.MacroDeck.GUI.CustomControls;
+
 namespace SuchByte.HomeAssistantPlugin.GUI
 {
     partial class CallServiceConfigurator
@@ -29,12 +31,12 @@ namespace SuchByte.HomeAssistantPlugin.GUI
         /// </summary>
         private void InitializeComponent()
         {
-            this.servicesBox = new System.Windows.Forms.ComboBox();
+            this.servicesBox = new SuchByte.MacroDeck.GUI.CustomControls.RoundedComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.targetSelector = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
-            this.entityBox = new System.Windows.Forms.ComboBox();
+            this.entityBox = new SuchByte.MacroDeck.GUI.CustomControls.RoundedComboBox();
             this.lblDescription = new System.Windows.Forms.Label();
             this.lblName = new System.Windows.Forms.Label();
             this.flowLayoutPanel1.SuspendLayout();
@@ -43,12 +45,17 @@ namespace SuchByte.HomeAssistantPlugin.GUI
             // 
             // servicesBox
             // 
-            this.servicesBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
-            this.servicesBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            this.servicesBox.FormattingEnabled = true;
+            this.servicesBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            this.servicesBox.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.servicesBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDown;
+            this.servicesBox.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.servicesBox.Icon = null;
             this.servicesBox.Location = new System.Drawing.Point(129, -1);
             this.servicesBox.Name = "servicesBox";
-            this.servicesBox.Size = new System.Drawing.Size(351, 31);
+            this.servicesBox.Padding = new System.Windows.Forms.Padding(8, 2, 8, 2);
+            this.servicesBox.SelectedIndex = -1;
+            this.servicesBox.SelectedItem = null;
+            this.servicesBox.Size = new System.Drawing.Size(351, 26);
             this.servicesBox.TabIndex = 0;
             this.servicesBox.SelectedIndexChanged += new System.EventHandler(this.ServicesBox_SelectedIndexChanged);
             // 
@@ -89,12 +96,17 @@ namespace SuchByte.HomeAssistantPlugin.GUI
             // 
             // entityBox
             // 
-            this.entityBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
-            this.entityBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            this.entityBox.FormattingEnabled = true;
+            this.entityBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            this.entityBox.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.entityBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDown;
+            this.entityBox.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.entityBox.Icon = null;
             this.entityBox.Location = new System.Drawing.Point(123, 3);
             this.entityBox.Name = "entityBox";
-            this.entityBox.Size = new System.Drawing.Size(351, 31);
+            this.entityBox.Padding = new System.Windows.Forms.Padding(8, 2, 8, 2);
+            this.entityBox.SelectedIndex = -1;
+            this.entityBox.SelectedItem = null;
+            this.entityBox.Size = new System.Drawing.Size(351, 26);
             this.entityBox.TabIndex = 2;
             this.entityBox.SelectedIndexChanged += new System.EventHandler(this.EntityBox_SelectedIndexChanged);
             // 
@@ -134,12 +146,13 @@ namespace SuchByte.HomeAssistantPlugin.GUI
 
         #endregion
 
-        private System.Windows.Forms.ComboBox servicesBox;
+        
+        private RoundedComboBox servicesBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Panel targetSelector;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox entityBox;
+        private RoundedComboBox entityBox;
         private System.Windows.Forms.Label lblDescription;
         private System.Windows.Forms.Label lblName;
     }
