@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using SuchByte.HomeAssistantPlugin.Actions;
 using SuchByte.HomeAssistantPlugin.GUI;
 using SuchByte.MacroDeck.ActionButton;
 using SuchByte.MacroDeck.GUI;
@@ -28,17 +29,20 @@ namespace SuchByte.HomeAssistantPlugin
             HomeAssistant.OnStateChanged += StateChanged;
             HomeAssistant.OnAuthSuccess += OnAuthSuccess;
             List<Dictionary<string, string>> credentialsList = PluginCredentials.GetPluginCredentials(this);
-            Dictionary<string, string> credentials = null;
-            if (credentialsList.Count > 0)
+            if (credentialsList != null)
             {
-                credentials = credentialsList[0];
-            }
-            if (credentials != null)
-            {
-                Task.Run(() =>
+                Dictionary<string, string> credentials = null;
+                if (credentialsList.Count > 0)
                 {
-                    HomeAssistant.Connect(credentials["host"], credentials["token"], bool.Parse(credentials["ssl"]));
-                });
+                    credentials = credentialsList[0];
+                }
+                if (credentials != null)
+                {
+                    Task.Run(() =>
+                    {
+                        HomeAssistant.Connect(credentials["host"], credentials["token"], bool.Parse(credentials["ssl"]));
+                    });
+                }
             }
             
             this.Actions = new List<PluginAction>
@@ -89,29 +93,21 @@ namespace SuchByte.HomeAssistantPlugin
                     string[] suggestions = new string[0];
                     if (variablesArray.ToObject<List<string>>().Contains(newState["entity_id"].ToString()))
                     {
-                        object value = newState["state"];
-                        MacroDeck.Variables.VariableType type = MacroDeck.Variables.VariableType.String;
-                        if (Boolean.TryParse(value.ToString(), out bool b))
+                        string value = newState["state"].ToString().Replace("On", "True", StringComparison.OrdinalIgnoreCase).Replace("Off", "False", StringComparison.OrdinalIgnoreCase);
+                        VariableType type = VariableType.String;
+                        if (Boolean.TryParse(value, out bool b))
                         {
                             type = VariableType.Bool;
                         }
-                        else if (int.TryParse(value.ToString(), out int i))
+                        else if (int.TryParse(value, out int i))
                         {
                             type = VariableType.Integer;
                         }
-                        else if (float.TryParse(value.ToString(), out float f))
+                        else if (float.TryParse(value, out float f))
                         {
                             type = VariableType.Float;
                         }
-                        if (type.Equals(VariableType.String))
-                        {
-                            suggestions = new string[]
-                            {
-                                "On",
-                                "Off"
-                            };
-                        }
-                        VariableManager.SetValue(newState["entity_id"].ToString(), newState["state"], type, this, suggestions, false);
+                        VariableManager.SetValue(newState["entity_id"].ToString(), value, type, this, suggestions, false);
                     }
                     
                 }
@@ -128,31 +124,4 @@ namespace SuchByte.HomeAssistantPlugin
         }
     }
 
-    public class CallServiceAction : PluginAction
-    {
-        public override string Name => "Call service";
-        public override string Description => "Calls a Home Assistant service";
-        public override string DisplayName { get; set; } = "Call service";
-        public override bool CanConfigure => true;
-        public override ActionConfigControl GetActionConfigControl(ActionConfigurator actionConfigurator)
-        {
-            return new CallServiceConfigurator(this, actionConfigurator);
-        }
-        public override void Trigger(string clientId, ActionButton actionButton)
-        {
-            if (!Main.HomeAssistant.IsLoggedIn)
-            {
-                return;
-            }
-            if (!String.IsNullOrWhiteSpace(Configuration))
-            {
-                try
-                {
-                    JObject configurationObject = JObject.Parse(Configuration);
-                    Main.HomeAssistant.CallServiceAsync(configurationObject["service"].ToString(), configurationObject["entityId"].ToString());
-                } catch { }
-            }
-        }
-
-    }
 }

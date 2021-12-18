@@ -38,12 +38,23 @@ namespace SuchByte.HomeAssistantPlugin.GUI
                 }
             }
 
-            actionConfigurator.ActionSave += OnActionSave;
         }
 
-        private void OnActionSave(object sender, EventArgs e)
+        public override bool OnActionSave()
         {
-            this.SaveConfig();
+            if (string.IsNullOrWhiteSpace(this.servicesBox.Text))
+            {
+                return false;
+            }
+            JObject configuration = new JObject
+            {
+                ["service"] = this.servicesBox.Text,
+                ["service"] = this.servicesBox.Text,
+                ["entityId"] = this.entityBox.Text
+            };
+            this._macroDeckAction.ConfigurationSummary = this.servicesBox.Text + (!string.IsNullOrWhiteSpace(this.entityBox.Text) ? " -> " + this.entityBox.Text : "");
+            this._macroDeckAction.Configuration = configuration.ToString();
+            return true;
         }
 
         private void ServicesLoaded(object sender, EventArgs e)
@@ -150,20 +161,6 @@ namespace SuchByte.HomeAssistantPlugin.GUI
                     OnEntitiesLoaded(null, EventArgs.Empty);
                 }
             });
-        }
-
-        private void SaveConfig()
-        {
-            try
-            {
-                JObject configuration = new JObject();
-                configuration["service"] = this.servicesBox.Text;
-                configuration["service"] = this.servicesBox.Text;
-                configuration["entityId"] = this.entityBox.Text;
-                this._macroDeckAction.DisplayName = this._macroDeckAction.Name + " -> " + this.servicesBox.Text;
-                this._macroDeckAction.Configuration = configuration.ToString();
-                Debug.WriteLine("HA action config saved");
-            } catch { }
         }
 
         private void ServicesBox_SelectedIndexChanged(object sender, EventArgs e)

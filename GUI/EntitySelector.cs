@@ -40,7 +40,6 @@ namespace SuchByte.HomeAssistantPlugin.GUI
                 string entity = this.entityList.GetItemText(this.entityList.Items[e.Index]);
                 if (!this.SelectedEntities.Contains(entity))
                 {
-                    Debug.WriteLine("Added " + entity);
                     this.SelectedEntities.Add(entity);
                 }
                 
@@ -50,7 +49,6 @@ namespace SuchByte.HomeAssistantPlugin.GUI
                 string entity = this.entityList.GetItemText(this.entityList.Items[e.Index]);
                 if (this.SelectedEntities.Contains(entity))
                 {
-                    Debug.WriteLine("Removed " + entity);
                     this.SelectedEntities.Remove(entity);
                 }
             }

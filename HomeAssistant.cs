@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using WatsonWebsocket;
 
 namespace SuchByte.HomeAssistantPlugin
@@ -36,7 +37,6 @@ namespace SuchByte.HomeAssistantPlugin
         public event StateChangedEventArgs OnStateChanged;
         public event EventHandler OnAuthSuccess;
         public event EventHandler OnAuthFailed;
-
 
         public HomeAssistant()
         {
