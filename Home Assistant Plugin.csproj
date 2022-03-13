@@ -5,8 +5,8 @@
     <RootNamespace>SuchByte.HomeAssistantPlugin</RootNamespace>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <UseWindowsForms>true</UseWindowsForms>
-    <Version>1.1.0-beta</Version>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <Version>1.1.1</Version>
+    <AssemblyVersion>1.1.1.0</AssemblyVersion>
     <Authors>Macro Deck</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Copyright>SuchByte</Copyright>

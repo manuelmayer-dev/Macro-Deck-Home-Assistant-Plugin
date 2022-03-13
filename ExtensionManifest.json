@@ -1,0 +1,10 @@
+﻿{
+  "type": "Plugin",
+  "name": "Home Assistant Plugin",
+  "author": "Macro Deck",
+  "repository": "https://github.com/SuchByte/Macro-Deck-Home-Assistant-Plugin",
+  "packageId": "SuchByte.HomeAssistantPlugin",
+  "version": "1.1.1",
+  "target-plugin-api-version": 32,
+  "dll": "Home Assistant Plugin.dll"
+}
