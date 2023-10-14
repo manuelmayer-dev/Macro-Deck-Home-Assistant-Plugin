@@ -2,267 +2,320 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
+using SuchByte.MacroDeck.Logging;
+using SuchByte.MacroDeck.Variables;
 using WatsonWebsocket;
 
-namespace SuchByte.HomeAssistantPlugin
+namespace SuchByte.HomeAssistantPlugin;
+
+public class HomeAssistant
 {
-    public class HomeAssistant
+    public bool IsConnected => _webSocketClient != null && _webSocketClient.Connected;
+    
+    public bool IsLoggedIn { get; private set; }
+    
+    private const string ApiString = "/api/websocket";
+    private string Protocol => _ssl ? "wss://" : "ws://";
+
+    private string _homeAssistantHost = "";
+
+    private string _homeAssistantToken = "";
+
+    private bool _ssl; 
+
+    private WatsonWsClient _webSocketClient;
+
+    private int _nextId = 0;
+
+    private ConcurrentDictionary<int, TaskCompletionSource<JObject>> _responseHandlers;
+
+    public delegate void StateChangedEventArgs(object sender, JObject data);
+    public event StateChangedEventArgs OnStateChanged;
+    public event EventHandler OnAuthSuccess;
+    public event EventHandler OnAuthFailed;
+    public event EventHandler<bool> ConnectionStateChanged;
+
+    private CancellationTokenSource _autoReconnectCancellationTokenSource;
+
+    public async Task Connect(string host, string token, bool ssl)
     {
-        private readonly string _apiString = "/api/websocket";
-        private string _protocol => (_ssl ? "wss://" : "ws://");
-
-        private string _homeAssistantHost = "";
-
-        private string _homeAssistantToken = "";
-
-        private bool _ssl = false;
-
-        private bool _loggedIn = false;
-        public bool IsConnected => (_webSocketClient != null && _webSocketClient.Connected);
-        public bool IsLoggedIn => _loggedIn;
-
-        private WatsonWsClient _webSocketClient;
-
-        private int _nextId = 0;
-
-        private ConcurrentDictionary<int, TaskCompletionSource<JObject>> _responseHandlers;
-
-
-        /// Events
-        public delegate void StateChangedEventArgs(object sender, JObject data);
-        public event StateChangedEventArgs OnStateChanged;
-        public event EventHandler OnAuthSuccess;
-        public event EventHandler OnAuthFailed;
-
-        public HomeAssistant()
+        if (_webSocketClient != null)
         {
-
-        }
-
-        public void Connect(string host, string token, bool ssl)
-        {
-            if (this._webSocketClient != null)
+            if (_webSocketClient.Connected)
             {
-                if (this._webSocketClient.Connected)
-                {
-                    this._webSocketClient.Stop();
-                }
-                this._webSocketClient.ServerConnected -= ServerConnected;
-                this._webSocketClient.ServerDisconnected -= ServerDisconnected;
-                this._webSocketClient.MessageReceived -= MessageReceived;
-                this._webSocketClient.Dispose();
-                this._loggedIn = false;
+                _autoReconnectCancellationTokenSource?.Cancel();
+                _autoReconnectCancellationTokenSource = null;
+                await _webSocketClient.StopAsync();
             }
-            this._homeAssistantHost = host;
-            this._homeAssistantToken = token;
-            this._ssl = ssl;
-            this._responseHandlers = new ConcurrentDictionary<int, TaskCompletionSource<JObject>>();
+            _webSocketClient.ServerConnected -= ServerConnected;
+            _webSocketClient.ServerDisconnected -= ServerDisconnected;
+            _webSocketClient.MessageReceived -= MessageReceived;
+            _webSocketClient.Dispose();
+            IsLoggedIn = false;
+        }
+        _homeAssistantHost = host;
+        _homeAssistantToken = token;
+        _ssl = ssl;
+        _responseHandlers = new ConcurrentDictionary<int, TaskCompletionSource<JObject>>();
             
-            try
-            {
-                this._webSocketClient = new WatsonWsClient(new Uri(this._protocol + this._homeAssistantHost + this._apiString));
-                this._webSocketClient.ServerConnected += ServerConnected;
-                this._webSocketClient.ServerDisconnected += ServerDisconnected;
-                this._webSocketClient.MessageReceived += MessageReceived;
-                this._webSocketClient.Start();
-            } catch
-            {
-                if (OnAuthFailed != null)
-                {
-                    OnAuthFailed(null, EventArgs.Empty);
-                }
-            }
-        }
-
-        private void MessageReceived(object sender, MessageReceivedEventArgs e)
+        try
         {
-            JObject body = JObject.Parse(Encoding.UTF8.GetString(e.Data));
-            if (body["type"] != null)
-            {
-                switch (body["type"].ToString())
-                {
-                    case "result":
-                        int messageId = Int32.Parse(body["id"].ToString());
-
-                        if (_responseHandlers.TryRemove(messageId, out TaskCompletionSource<JObject> handler))
-                        {
-                            handler.SetResult(body);
-                        }
-                        break;
-                    case "event":
-                        JObject eventBody = body["event"] as JObject;
-                        if (eventBody["event_type"].ToString() == "state_changed")
-                        {
-                            string entityId = eventBody["data"]["entity_id"].ToString();
-                            JObject newState = eventBody["data"]["new_state"] as JObject;
-                            if (OnStateChanged != null)
-                            {
-                                OnStateChanged(entityId, newState);
-                            }
-                        }
-                        break;
-                    case "auth_ok":
-                        this._loggedIn = true;
-                        if (OnAuthSuccess != null)
-                        {
-                            OnAuthSuccess(null, EventArgs.Empty);
-                        }
-                        break;
-                    case "auth_invalid":
-                        this._loggedIn = false;
-                        if (OnAuthFailed != null)
-                        {
-                            OnAuthFailed(null, EventArgs.Empty);
-                        }
-                        break;
-                }
-
-            }
-
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-        }
-
-        private void ServerConnected(object sender, EventArgs args)
+            _webSocketClient = new WatsonWsClient(new Uri(Protocol + _homeAssistantHost + ApiString));
+            _webSocketClient.AcceptInvalidCertificates = true;
+            _webSocketClient.KeepAliveInterval = 10;
+            _webSocketClient.ServerConnected += ServerConnected;
+            _webSocketClient.ServerDisconnected += ServerDisconnected;
+            _webSocketClient.MessageReceived += MessageReceived;
+            await _webSocketClient.StartAsync();
+        } catch
         {
-            Authenticate();
-            SubscribeEvents();
+            OnAuthFailed?.Invoke(null, EventArgs.Empty);
+            ConnectionStateChanged?.Invoke(this, false);
         }
+    }
 
-        private void ServerDisconnected(object sender, EventArgs args)
+    private void StartAutoReconnectHandler(CancellationToken cancellationToken)
+    {
+        try
         {
-            this._loggedIn = false;
-            var unusedHandlers = this._responseHandlers.ToArray();
-            _responseHandlers.Clear();
-            foreach (var cb in unusedHandlers)
+            Task.Run(async () =>
             {
-                var tcs = cb.Value;
-                tcs.TrySetCanceled();
-            }
-        }
-
-        private JObject SendRequest(string type, JObject additionalFields = null)
-        {
-            int messageId;
-            JObject result = null;
-
-            try
-            {
-                JObject body = new JObject();
-                body["type"] = type;
-
-                if (additionalFields != null)
+                while (!cancellationToken.IsCancellationRequested)
                 {
-                    body.Merge(additionalFields);
-                }
-
-                var taskCompletionSource = new TaskCompletionSource<JObject>();
-                do
-                {
-                    if (this._responseHandlers == null)
+                    if (IsConnected)
                     {
-                        break;
-                    }
-                    messageId = GetNewMessageId();
-                    if (this._responseHandlers.TryAdd(messageId, taskCompletionSource))
-                    {
-                        body.Add("id", messageId);
-                        break;
+                        await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
+                        continue;
                     }
 
-                } while (true);
-
-
-                this._webSocketClient.SendAsync(body.ToString());
-
-                taskCompletionSource.Task.Wait();
-                if (!taskCompletionSource.Task.IsCanceled)
-                {
-                    result = taskCompletionSource.Task.Result;
+                    await Connect(_homeAssistantHost, _homeAssistantToken, _ssl);
                 }
-            } catch { }
-           
-
-            
-
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-
-            return result;
+            }, cancellationToken);
         }
-
-        public void Authenticate()
+        catch (TaskCanceledException)
         {
-            JObject authObject = new JObject();
-            authObject["type"] = "auth";
-            authObject["access_token"] = this._homeAssistantToken;
-            this._webSocketClient.SendAsync(authObject.ToString());
+            // ignore
         }
+    }
 
-        public void SubscribeEvents()
-        {
-            JObject subscribeObject = new JObject();
-            subscribeObject["event_type"] = "state_changed";
-            SendRequest("subscribe_events", subscribeObject);
-        }
-        public JObject GetStates()
-        {
-            return SendRequest("get_states");
-        }
+    public async Task<JObject> GetStates()
+    {
+        return await SendRequest("get_states");
+    }
 
-        public JObject GetServices()
-        {
-            return SendRequest("get_services");
-        }
+    public async Task<JObject> GetServices()
+    {
+        return await SendRequest("get_services");
+    }
 
-        public List<string> GetEntityIds()
+    public async Task<List<string>> GetEntityIds()
+    {
+        var entityIds = new List<string>();
+        var results = await GetStates();
+        if (results["result"] is not JArray result)
         {
-            List<string> entityIds = new List<string>();
-            JArray results = GetStates()["result"] as JArray;
-            foreach (JObject jObject in results)
-            {
-                entityIds.Add(jObject["entity_id"].ToString());
-            }
-
             return entityIds;
         }
-
-        public void CallServiceAsync(string service, string entityId = "", JObject serviceData = null)
+        foreach (var jObject in result)
         {
-            Task.Run(() =>
+            if (jObject["entity_id"] is JObject entityId)
             {
-                JObject body = new JObject
-                {
-                    ["domain"] = service.Split(".")[0],
-                    ["service"] = service.Split(".")[1],
-                    ["target"] = new JObject
-                    {
-                        ["entity_id"] = entityId,
-                    },
-                };
+                entityIds.Add(entityId.ToString());
+            }
+        }
 
-                if (serviceData != null)
+        return entityIds;
+    }
+
+    public async Task CallServiceAsync(string service, string entityId = "", JObject serviceData = null)
+    {
+        var body = new JObject
+        {
+            ["domain"] = service.Split(".")[0],
+            ["service"] = service.Split(".")[1],
+            ["target"] = new JObject
+            {
+                ["entity_id"] = entityId,
+            },
+        };
+
+        if (serviceData != null)
+        {
+            body["service_data"] = serviceData;
+        }
+
+        await SendRequest("call_service", body);
+    }
+
+    private void MessageReceived(object sender, MessageReceivedEventArgs e)
+    {
+        var body = JObject.Parse(Encoding.UTF8.GetString(e.Data));
+        if (body["type"] == null)
+        {
+            return;
+        }
+        
+        switch (body["type"].ToString())
+        {
+            case "result":
+                HandleResultReceived(body);
+                break;
+            case "event":
+                HandleEventReceived(body);
+                break;
+            case "auth_ok":
+                IsLoggedIn = true;
+                OnAuthSuccess?.Invoke(null, EventArgs.Empty);
+                ConnectionStateChanged?.Invoke(this, true);
+                VariableManager.SetValue("homeassistant_connected", true, VariableType.Bool, Main.Instance, null);
+                break;
+            case "auth_invalid":
+                IsLoggedIn = false;
+                OnAuthFailed?.Invoke(null, EventArgs.Empty);
+                ConnectionStateChanged?.Invoke(this, false);
+                VariableManager.SetValue("homeassistant_connected", false, VariableType.Bool, Main.Instance, null);
+                break;
+        }
+    }
+
+    private void HandleResultReceived(JObject body)
+    {
+        var messageId = int.Parse(body["id"]?.ToString() ?? "-1");
+
+        if (_responseHandlers.TryRemove(messageId, out var handler))
+        {
+            handler.SetResult(body);
+        }
+    }
+
+    private void HandleEventReceived(JObject body)
+    {
+        if (body["event"] is not { } eventBody)
+        {
+            return;
+        }
+
+        if (eventBody["event_type"] is not { } eventType)
+        {
+            return;
+        }
+
+        if (!eventType.ToString().Equals("state_changed", StringComparison.InvariantCultureIgnoreCase))
+        {
+            return;
+        }
+
+        if (eventBody["data"] is not { } eventData)
+        {
+            return;
+        }
+
+        var entityId = eventData["entity_id"]?.ToString();
+        if (eventData["new_state"] is JObject newState && entityId is not null)
+        {
+            OnStateChanged?.Invoke(entityId, newState);
+        }
+    }
+
+    private async void ServerConnected(object sender, EventArgs args)
+    {
+        if (_autoReconnectCancellationTokenSource == null)
+        {
+            _autoReconnectCancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = _autoReconnectCancellationTokenSource.Token;
+            StartAutoReconnectHandler(cancellationToken);
+        }
+        await Authenticate();
+        await SubscribeEvents();
+    }
+
+    private void ServerDisconnected(object sender, EventArgs args)
+    {
+        VariableManager.SetValue("homeassistant_connected", false, VariableType.Bool, Main.Instance, null);
+        ConnectionStateChanged?.Invoke(this, false);
+        IsLoggedIn = false;
+        var unusedHandlers = _responseHandlers.ToArray();
+        _responseHandlers.Clear();
+        foreach (var cb in unusedHandlers)
+        {
+            var tcs = cb.Value;
+            tcs.TrySetCanceled();
+        }
+    }
+
+    private async Task<JObject> SendRequest(string type, JObject additionalFields = null)
+    {
+        JObject result = null;
+
+        try
+        {
+            var body = new JObject
+            {
+                ["type"] = type
+            };
+
+            if (additionalFields != null)
+            {
+                body.Merge(additionalFields);
+            }
+
+            var taskCompletionSource = new TaskCompletionSource<JObject>();
+            do
+            {
+                if (_responseHandlers == null)
                 {
-                    body["service_data"] = serviceData;
+                    break;
                 }
 
-                SendRequest("call_service", body);
-            });
+                var messageId = GetNewMessageId();
+                if (_responseHandlers.TryAdd(messageId, taskCompletionSource))
+                {
+                    body.Add("id", messageId);
+                    break;
+                }
+            } while (true);
 
+            await _webSocketClient.SendAsync(body.ToString());
+
+            await taskCompletionSource.Task;
+            if (!taskCompletionSource.Task.IsCanceled)
+            {
+                result = taskCompletionSource.Task.Result;
+            }
         }
-
-
-        protected int GetNewMessageId()
+        catch (Exception ex)
         {
-            this._nextId++;
-            return this._nextId;
+            MacroDeckLogger.Error(Main.Instance, $"Error while sending message to Home Assistant\n{ex}");
         }
 
+        return result;
+    }
+
+    private async Task Authenticate()
+    {
+        var authObject = new JObject
+        {
+            ["type"] = "auth",
+            ["access_token"] = _homeAssistantToken
+        };
+        await _webSocketClient.SendAsync(authObject.ToString());
+    }
+
+    private async Task SubscribeEvents()
+    {
+        var subscribeObject = new JObject
+        {
+            ["event_type"] = "state_changed"
+        };
+        await SendRequest("subscribe_events", subscribeObject);
+    }
+        
+    private int GetNewMessageId()
+    {
+        _nextId++;
+        return _nextId;
     }
 }
