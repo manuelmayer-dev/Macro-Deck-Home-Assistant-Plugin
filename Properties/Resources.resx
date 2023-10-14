@@ -124,4 +124,10 @@
   <data name="magnifying glass" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\magnifying glass.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="home_assistant_connected" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\home_assistant_connected.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="home_assistant_disconnected" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\home_assistant_disconnected.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

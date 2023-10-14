@@ -108,7 +108,7 @@ namespace SuchByte.HomeAssistantPlugin.GUI
             this.Controls.Add(this.entityList);
             this.Name = "EntitySelector";
             this.Text = "EntitySelector";
-            this.Load += new System.EventHandler(this.EntitySelector_Load);
+            this.Shown += new System.EventHandler(this.EntitySelector_Shown);
             this.Controls.SetChildIndex(this.entityList, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.btnOk, 0);
