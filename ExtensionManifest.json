@@ -2,7 +2,7 @@
   "type": "Plugin",
   "name": "Home Assistant Plugin",
   "author": "Macro Deck",
-  "repository": "https://github.com/SuchByte/Macro-Deck-Home-Assistant-Plugin",
+  "repository": "https://github.com/manuelmayer-dev/Macro-Deck-Home-Assistant-Plugin",
   "packageId": "SuchByte.HomeAssistantPlugin",
   "version": "1.2.0",
   "target-plugin-api-version": 40,
