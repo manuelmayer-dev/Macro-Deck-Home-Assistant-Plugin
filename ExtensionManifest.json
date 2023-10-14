@@ -6,7 +6,7 @@
   "packageId": "SuchByte.HomeAssistantPlugin",
   "version": "1.2.0",
   "target-plugin-api-version": 40,
-  "target-macro-deck-version": "1.13.0-b9",
+  "target-macro-deck-version": "2.13.0-b9",
   "dll": "Home Assistant Plugin.dll",
   "author-discord-userid": 300244123569487873
 }
